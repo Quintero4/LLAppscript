@@ -1,0 +1,97 @@
+function guardarDatos(data, fileData) {
+  try {
+    const SHEET_ID = '1C-tLy2n9-W5RVgdcF6P6BNmkBhlBY8ePstOSCFJKNF0'; 
+    const FOLDER_ID = '1_1rdyGfWbCGxIoOPQh9itc4bz7mo2HZY'; 
+    const TEMPLATE_ID = '1IUSitAQPApYRZO1tXRpT0UyOM2NE5rCsQISmVtIKyIs'; 
+
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    const sheet = ss.getSheets()[0];
+    const folder = DriveApp.getFolderById(FOLDER_ID);
+
+    // --- MODIFICACIÓN PASO 1: GENERAR CONTADOR DE ORDEN ---
+    // Obtenemos la última fila con datos para calcular el siguiente índice
+    const lastRow = sheet.getLastRow();
+    let siguienteNumero = 1;
+    
+    if (lastRow > 1) {
+      // Si ya hay registros, el número será el total de filas de datos actual + 1
+      // (Asumiendo que la fila 1 son las cabeceras)
+      siguienteNumero = lastRow; 
+    }
+    
+    // Formateamos el número a 3 dígitos (ej: 001, 002...) y añadimos el prefijo LL_
+    const numeroFormateado = String(siguienteNumero).padStart(3, '0');
+    const nuevaReferencia = "LL_" + numeroFormateado;
+    // ------------------------------------------------------
+
+    // 1. CREAR COPIA DE LA PLANTILLA usando el nuevo formato en el nombre
+    const nombrePPT = nuevaReferencia + "_" + (data.title || "Sin_Titulo");
+    const copiaArchivo = DriveApp.getFileById(TEMPLATE_ID).makeCopy(nombrePPT, folder);
+    const presentation = SlidesApp.openById(copiaArchivo.getId());
+    const slide = presentation.getSlides()[0];
+
+    // 2. REEMPLAZAR TEXTOS (Busca {{etiqueta}} y pone el valor)
+    slide.replaceAllText('{{title}}', data.title || "");
+    slide.replaceAllText('{{Title}}', data.title || "");
+    slide.replaceAllText('{{STA}}', data.sta || "");
+    slide.replaceAllText('{{MSN}}', data.msn || "");
+    slide.replaceAllText('{{Author}}', data.author || "");
+    slide.replaceAllText('{{Date}}', Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd"));
+    
+    // Aquí usamos la nueva referencia generada automáticamente en lugar de lo que venga del formulario
+    slide.replaceAllText('{{Reference}}', nuevaReferencia);
+    
+    slide.replaceAllText('{{Description}}', data.description || "");
+    slide.replaceAllText('{{Solution}}', data.solution || "");
+    slide.replaceAllText('{{Do}}', data.do || "");
+    slide.replaceAllText('{{Dont}}', data.dont || "");
+    slide.replaceAllText('{{impactedProcess}}', data.impactedProcess || "");
+    slide.replaceAllText('{{Actions}}', data.actions || "");
+
+    // 3. PROCESAR IMAGEN SI EXISTE
+    if (fileData && fileData.data) {
+      const blob = Utilities.newBlob(Utilities.base64Decode(fileData.data), fileData.type, fileData.name);
+      
+      const shapes = slide.getShapes();
+      let marcadorEncontrado = false;
+
+      for (let i=0; i < shapes.length; i++){
+        const shape = shapes[i];
+        const text = shape.getText().asString().trim();
+
+        if (text === '{{Image}}') {
+          const left = shape.getLeft();
+          const top = shape.getTop();
+          const width = shape.getWidth();
+          const height = shape.getHeight();
+
+          slide.insertImage(blob, left, top, width, height);
+          shape.remove();
+          marcadorEncontrado = true;
+          break;
+        }
+      }
+
+      if (!marcadorEncontrado) {
+        console.warn("No se encontró el marcador {{Image}} en la plantilla");
+      }
+    }
+
+    presentation.saveAndClose();
+    const finalUrl = copiaArchivo.getUrl();
+
+    // 4. REGISTRAR EN EXCEL (Guardando la nueva referencia generada)
+    const row = [
+      data.sta || "", data.msn || "", data.author || "", nuevaReferencia, // <-- Guardamos LL_XXX aquí
+      new Date(), data.title || "", data.description || "", data.solution || "",
+      data.do || "", data.dont || "", data.impactedProcess || "", data.actions || "",
+      finalUrl
+    ];
+
+    sheet.appendRow(row);
+    return "¡Lección Aprendida guardada con éxito bajo la referencia " + nuevaReferencia + "!";
+
+  } catch (error) {
+    return "Error en el servidor: " + error.toString();
+  }
+}
