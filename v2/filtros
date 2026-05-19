@@ -1,0 +1,29 @@
+<input list="lista-sta" id="sta" name="sta" required placeholder="Ej: 06 o 70/72" style="width: 100%; padding: 4px; box-sizing: border-box;">
+<datalist id="lista-sta">
+  <option value="06"></option>
+  <option value="08"></option>
+  <option value="10"></option>
+  <option value="14"></option>
+  <option value="30"></option>
+  <option value="35"></option>
+  <option value="40"></option>
+  <option value="60"></option>
+  <option value="70/72"></option>
+</datalist>
+
+<input list="lista-msn" id="msn" name="msn" required placeholder="Ej: 0135" style="width: 100%; padding: 4px; box-sizing: border-box;">
+<datalist id="lista-msn">
+  </datalist>
+
+
+// Este bloque genera los MSN del 0135 al 0220 automáticamente al cargar la página
+  document.addEventListener("DOMContentLoaded", function() {
+    const msnDatalist = document.getElementById("lista-msn");
+    for (let i = 135; i <= 220; i++) {
+      let option = document.createElement("option");
+      // Le añadimos el "0" delante para que sea formato 0135, 0136...
+      option.value = "0" + i; 
+      msnDatalist.appendChild(option);
+    }
+  });
+  
