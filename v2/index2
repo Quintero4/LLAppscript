@@ -105,19 +105,16 @@
           <option value="60"></option>
           <option value="70/72"></option>
         </datalist>
-      </div> <div class="header-cell label-blue">MSN</div>
+      </div> 
+      <div class="header-cell label-blue">MSN</div>
       <div class="header-cell">
         <input list="lista-msn" id="msn" name="msn" required placeholder="Ej: 0135" style="width: 100%; padding: 4px; box-sizing: border-box;">
-        <datalist id="lista-msn">
-        </datalist>
-      </div> <div class="header-cell label-blue">Author</div>
+        <datalist id="lista-msn"></datalist>
+      </div> 
+      <div class="header-cell label-blue">Author</div>
       <div class="header-cell">
         <input type="text" name="author" placeholder="...">
       </div>
-    </div>
-  
-      <div class="header-cell label-blue">Author</div>
-      <div class="header-cell"><input type="text" name="author" placeholder="..."></div>
     </div>
     
     <div class="grid-header">
@@ -125,8 +122,6 @@
       <div class="header-cell" style="grid-column: span 3;"><input type="text" name="title"></div>
       <div class="header-cell label-blue">Reference</div>      
       <div class="header-cell"><input type="text" name="Reference" placeholder="..."></div>
-      <div class="header-cell label-blue">Date</div>
-      <div class="header-cell auto-gen">Auto-generado</div>
     </div>
 
     <div class="section">
@@ -171,17 +166,16 @@
 </div>
 
 <script>
- document.addEventListener("DOMContentLoaded", function() {
+  // Autogenerar MSN del 0135 al 0220
+  document.addEventListener("DOMContentLoaded", function() {
     const msnDatalist = document.getElementById("lista-msn");
     for (let i = 135; i <= 220; i++) {
       let option = document.createElement("option");
-      // Le añadimos el "0" delante para que sea formato 0135, 0136...
       option.value = "0" + i; 
       msnDatalist.appendChild(option);
     }
   });
   
-
   // Función para dejar la imagen fija en el cuadro tras seleccionarla
   function fijarImagen(input) {
     const preview = document.getElementById('previewImg');
