@@ -1,19 +1,28 @@
-<input list="lista-sta" id="sta" name="sta" required placeholder="Ej: 06 o 70/72" style="width: 100%; padding: 4px; box-sizing: border-box;">
-<datalist id="lista-sta">
-  <option value="06"></option>
-  <option value="08"></option>
-  <option value="10"></option>
-  <option value="14"></option>
-  <option value="30"></option>
-  <option value="35"></option>
-  <option value="40"></option>
-  <option value="60"></option>
-  <option value="70/72"></option>
-</datalist>
-
-<input list="lista-msn" id="msn" name="msn" required placeholder="Ej: 0135" style="width: 100%; padding: 4px; box-sizing: border-box;">
-<datalist id="lista-msn">
-  </datalist>
+<div class="grid-header">
+      <div class="header-cell label-blue">STA</div>
+      <div class="header-cell">
+        <input list="lista-sta" id="sta" name="sta" required placeholder="Ej: 06 o 70/72" style="width: 100%; padding: 4px; box-sizing: border-box;">
+        <datalist id="lista-sta">
+          <option value="06"></option>
+          <option value="08"></option>
+          <option value="10"></option>
+          <option value="14"></option>
+          <option value="30"></option>
+          <option value="35"></option>
+          <option value="40"></option>
+          <option value="60"></option>
+          <option value="70/72"></option>
+        </datalist>
+      </div> <div class="header-cell label-blue">MSN</div>
+      <div class="header-cell">
+        <input list="lista-msn" id="msn" name="msn" required placeholder="Ej: 0135" style="width: 100%; padding: 4px; box-sizing: border-box;">
+        <datalist id="lista-msn">
+        </datalist>
+      </div> <div class="header-cell label-blue">Author</div>
+      <div class="header-cell">
+        <input type="text" name="author" placeholder="...">
+      </div>
+    </div>
 
 
 // Este bloque genera los MSN del 0135 al 0220 automáticamente al cargar la página
